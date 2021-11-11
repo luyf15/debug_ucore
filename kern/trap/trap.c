@@ -47,17 +47,9 @@ static struct pseudodesc idt_pd = {sizeof(idt)-1, (uintptr_t)idt};
 /* idt_init - initialize IDT to each of the entry points in kern/trap/vectors.S */
 void
 idt_init(void) {
-     /* LAB1 YOUR CODE : STEP 2 */
-     /* (1) Where are the entry addrs of each Interrupt Service Routine (ISR)?
-      *     All ISR's entry addrs are stored in __vectors. where is uintptr_t __vectors[] ?
-      *     __vectors[] is in kern/trap/vector.S which is produced by tools/vector.c
-      *     (try "make" command in lab1, then you will find vector.S in kern/trap DIR)
-      *     You can use  "extern uintptr_t __vectors[];" to define this extern variable which will be used later.
-      * (2) Now you should setup the entries of ISR in Interrupt Description Table (IDT).
-      *     Can you see idt[256] in this file? Yes, it's IDT! you can use SETGATE macro to setup each item of IDT
-      * (3) After setup the contents of IDT, you will let CPU know where is the IDT by using 'lidt' instruction.
-      *     You don't know the meaning of this instruction? just google it! and check the libs/x86.h to know more.
-      *     Notice: the argument of lidt is idt_pd. try to find it!
+     /* (1) All ISR's entry addrs are stored in __vectors[] (in kern/trap/vector.S which is produced by tools/vector.c)
+      * (2) Use SETGATE macro to setup each item of IDT
+      * (3) CPU know where is the IDT by 'idtr', which 'lidt' instruction can load idt's address into.
       */
     idt_pd.pd_base = (uintptr_t)idt;
     idt_pd.pd_lim = sizeof(idt) - 1;
@@ -341,9 +333,9 @@ trap_dispatch(struct trapframe *tf) {
         // in kernel, it must be a mistake
         if ((tf->tf_cs & 3) == 0) {
             print_trapframe(tf);
-            panic("unexpected trap in kernel. %d\n",tf->tf_trapno);
+            panic("unexpected trap in kernel:0x%08x, %s\n", tf->tf_trapno, trapname(tf->tf_trapno));
         }
-        else cprintf("unexpected trap in user.number %d\n",tf->tf_trapno);
+        else cprintf("unexpected trap in user:0x%08x, %s\n", tf->tf_trapno, trapname(tf->tf_trapno));
     }
 }
 
