@@ -250,7 +250,7 @@ trap_dispatch(struct trapframe *tf) {
         if (tf->tf_cs != USER_CS) {
             tf->tf_cs = USER_CS;
             tf->tf_ds = tf->tf_es = tf->tf_ss = USER_DS;
-            //tf->tf_esp = (uint32_t)tf + sizeof(struct trapframe) - 8;
+            tf->tf_esp = (uint32_t)tf + sizeof(struct trapframe) - 8;
 		
             // set eflags, make sure ucore can use io under user mode.
             // if CPL > IOPL, then cpu will generate a general protection.

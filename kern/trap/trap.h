@@ -44,8 +44,8 @@
  * These are arbitrarily chosen, but with care not to overlap
  * processor defined exceptions or interrupt vectors.
  * */
-#define T_SWITCH_TOU                120    // user/kernel switch
-#define T_SWITCH_TOK                121    // user/kernel switch
+#define T_SWITCH_TOU                120    // kernel to user switch
+#define T_SWITCH_TOK                121    // user to kernel switch
 #define USER_SLEEP                  122
 #define SET_TF                      123
 /* registers as pushed by pushal */
