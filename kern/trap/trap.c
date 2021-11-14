@@ -279,6 +279,7 @@ trap_dispatch(struct trapframe *tf) {
         //intr_enable();
         count = *(uint32_t *)(tf->tf_esp);
         tf->tf_regs.reg_eax = sleep(count);
+        tf->tf_eflags &= ~0x100;
         //intr_disable();
         //*(uint32_t *)(tf->tf_esp - 4) = sleep(count);
         break;

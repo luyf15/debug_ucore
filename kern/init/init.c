@@ -26,7 +26,7 @@ kern_init(void){
     print_kerninfo();
 
     grade_backtrace();
-    //set_hardwarebp(0x1002c7,0,0x403)
+    //set_hardwarebp(0x100252,0,0x403)
     // asm __volatile__(
     //     "movl $0x10024f,%eax \n"
     //     "movl %eax,%dr0 \n"
@@ -42,10 +42,24 @@ kern_init(void){
 
     clock_init();               // init clock interrupt
     intr_enable();              // enable irq interrupt
+    asm __volatile__(
+            "movl %0,%%eax \n"
+            "movl %%eax,%%edx \n"
+            "xor %%eax,%%eax \n"
+            "xor %%edx,%%edx \n"
+            //"L1: \t"
+            "div %%eax \n"
+            "inc %%edx \n"
+            //"jmp L1 \n"
+            "div %%eax \n"
+            "movl %%ebx,%%eax"
+            ::"i"(114)
+            :"eax","edx"
+        );
 
     //LAB1: CAHLLENGE 1 If you try to do it, uncomment lab1_switch_test()
     // user/kernel mode switch test
-    lab1_switch_test();
+    //lab1_switch_test();
 
     /* do nothing */
     while (1);
@@ -141,26 +155,14 @@ lab1_switch_test(void) {
     lab1_switch_to_user();
     //user_int(3)
     //user_int(3)
-
-    asm __volatile__(
-        "movl %0,%%eax \n"
-        "movl %%eax,%%edx \n"
-        "xor %%eax,%%eax \n"
-        "xor %%edx,%%edx \n"
-        //"L1: \t"
-        "div %%eax \n"
-        "inc %%edx \n"
-        //"jmp L1 \n"
-        "div %%edx \n"
-        "movl %%ebx,%%eax"
-        ::"i"(114514)
-        :"eax","edx"
-    );
+    /*
+    
+    */
     //user_int(SET_TF)
     //user_int(SET_TF)
     if (user_sleep(5))cprintf("User syscall sleep succeeded!\n");
-    cprintf("+++ switch to kernel mode +++\n");
-    lab1_switch_to_kernel();
+    //cprintf("+++ switch to kernel mode +++\n");
+    //lab1_switch_to_kernel();
     //lab1_print_cur_status();
 }
 
